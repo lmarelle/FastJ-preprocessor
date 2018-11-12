@@ -1,4 +1,4 @@
-   77 wavelngth bins(nm)  '(i5,2f8.2)'
+   77 wavelength bins(nm)  '(i5,2f8.2)'
     1  177.49  178.30
     2  178.30  179.26
     3  179.26  180.38
@@ -110,7 +110,7 @@ JX wavelength bin assignments std bin#, JX bin# '(2i5)'
    35  10 
    36  10 
    37  11 
-   38  11 
+   38  12 
    39  12 
    40  12 
    41  12 

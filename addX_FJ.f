@@ -57,11 +57,11 @@
 
 !!!!!!!!!!!!!!!!!!!!initialization call to user subroutine!!!!!!!!!!!!!!
         INIT = 0
-      call XHOBR (WW,TT,XP,XM, X,INIT,TITLNEW)
+      call XBRNO2 (WW,TT,XP,XM, X,INIT,TITLNEW)
 
 
 
-!---synchronize with the HOBR cross sections (whether done or not)
+!---synchronize with the BRNO2 cross sections (whether done or not)
 !---will loop K=1:NZ_  (J = K - 1 + K1), wavel = WZ(K)
         do J=1,NS_
           if (WZ(1) .eq. W(J)) goto 10
@@ -121,8 +121,8 @@
           TITLET = ' 220'
           TT = 220.d0
         else if (ITT.eq.2) then
-          TITLET = ' 295'
-          TT = 295.d0
+          TITLET = ' 296'
+          TT = 296.d0
         else
           stop
         endif
@@ -136,7 +136,7 @@
         I = IBINJ(J)
         if (I .gt. 0) then
 
-        call XHOBR (W(J), TT,XP,XM, XNEW, INIT, TITLNEW)
+        call XBRNO2 (W(J), TT,XP,XM, XNEW, INIT, TITLNEW)
 
           FBIN(I) = FBIN(I) + F(J)
           ABIN(I) = ABIN(I) + F(J)*XNEW
@@ -181,7 +181,7 @@
 
 !-------------sample subroutine for fast-JX Xsection generation---------
 !-----------------------------------------------------------------------
-      subroutine XHOBR (WW,TT,PP,MM, XXWT,INIT, TITLNEW)
+      subroutine XBRNO2 (WW,TT,PP,MM, XXWT,INIT, TITLNEW)
 !-----------------------------------------------------------------------
 !   WW = wavelength (nm)
 !   TT = temerature (K) for interpolation
@@ -203,8 +203,8 @@
 
       if(INIT .eq. 0) then
         ! Read cross section file
-        TITLNEW = 'HOBR '
-        FTBL = 'XHOBR_IUPACtbl.dat'
+        TITLNEW = 'BRNO2 '
+        FTBL = 'XBRNO2_IUPACtbl.dat'
         open (3, file=FTBL, status='OLD')
           ! Read header and write it
           read(3,'(a)') TABLE

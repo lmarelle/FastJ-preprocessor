@@ -121,8 +121,8 @@
           TITLET = ' 220'
           TT = 220.d0
         else if (ITT.eq.2) then
-          TITLET = ' 298'
-          TT = 298.d0
+          TITLET = ' 200'
+          TT = 200.d0
         else
           stop
         endif
@@ -204,7 +204,7 @@
       if(INIT .eq. 0) then
         ! Read cross section file
         TITLNEW = 'CLNO2 '
-        FTBL = 'XCLNO2_298K_IUPACtbl.dat'
+        FTBL = 'XCLNO2_200K_IUPACtbl.dat'
         open (3, file=FTBL, status='OLD')
           ! Read header and write it
           read(3,'(a)') TABLE
@@ -225,7 +225,7 @@
           IT = 1
         endif
         TFACT = (TTL - T3(IT))/(T3(IT+1) - T3(IT))
-!---interpolate X-section vs. Wavelength, T=298
+!---interpolate X-section vs. Wavelength, T=200
         IW = 1
         do I = 2,NW-1
           if (WW .gt. W(I)) IW = I

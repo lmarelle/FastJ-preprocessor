@@ -1,7 +1,23 @@
 # Louis Marelle, 2018/10/18
 #
-# Contains the code performing cross section calculations for Fast-JX 6.8 input, from M. J. Prather
+# Contains the code performing cross section calculations for Fast-J input,
+# from M. J. Prather, adapted by L. Marelle
 #
-Downloaded from  ftp://128.200.14.8/public/prather/Fast-J_&_Cloud-J/UCI_fastJX68_addX.zip
-gfortran addX_FJX_CFCl3.f -o addX_FJX_CFCl3.exe
-./addX_FJX_CFCl3.exe
+Base code downloaded from
+ftp://128.200.14.8/public/prather/Fast-J_&_Cloud-J/UCI_fastJX68_addX.zip
+I adapted the code to use it with Fast-J instead of Fast-JX.
+
+- To run for a different species, retrieve the cross-section data on e.g. IUPAC:
+  http://iupac.pole-ether.fr/
+- Copy the data to X<species_name>_<temperature_in_K>K_IUPACtbl.dat In this file,
+  modify the integer value at the top, indicating the number of data lines, in
+  order to match the number of lines just added.
+- In addX_FJ.f, update the X<species_name>_<temperature_in_K>K_IUPACtbl.dat
+  filename, the temperature, and the species name to match what is in the IUPAC
+  file.
+
+To then compile the code with gfortran:
+gfortran addX_FJ.f -o addX_FJ.exe
+
+To run:
+./addX_FJ.exe

@@ -57,11 +57,11 @@
 
 !!!!!!!!!!!!!!!!!!!!initialization call to user subroutine!!!!!!!!!!!!!!
         INIT = 0
-      call XCLNO2 (WW,TT,XP,XM, X,INIT,TITLNEW)
+      call XBRCL (WW,TT,XP,XM, X,INIT,TITLNEW)
 
 
 
-!---synchronize with the CLNO2 cross sections (whether done or not)
+!---synchronize with the BRCL cross sections (whether done or not)
 !---will loop K=1:NZ_  (J = K - 1 + K1), wavel = WZ(K)
         do J=1,NS_
           if (WZ(1) .eq. W(J)) goto 10
@@ -121,8 +121,8 @@
           TITLET = ' 220'
           TT = 220.d0
         else if (ITT.eq.2) then
-          TITLET = ' 200'
-          TT = 200.d0
+          TITLET = ' 298'
+          TT = 298.d0
         else
           stop
         endif
@@ -136,7 +136,7 @@
         I = IBINJ(J)
         if (I .gt. 0) then
 
-        call XCLNO2 (W(J), TT,XP,XM, XNEW, INIT, TITLNEW)
+        call XBRCL (W(J), TT,XP,XM, XNEW, INIT, TITLNEW)
 
           FBIN(I) = FBIN(I) + F(J)
           ABIN(I) = ABIN(I) + F(J)*XNEW
@@ -181,7 +181,7 @@
 
 !-------------sample subroutine for fast-JX Xsection generation---------
 !-----------------------------------------------------------------------
-      subroutine XCLNO2 (WW,TT,PP,MM, XXWT,INIT, TITLNEW)
+      subroutine XBRCL (WW,TT,PP,MM, XXWT,INIT, TITLNEW)
 !-----------------------------------------------------------------------
 !   WW = wavelength (nm)
 !   TT = temerature (K) for interpolation
@@ -203,8 +203,8 @@
 
       if(INIT .eq. 0) then
         ! Read cross section file
-        TITLNEW = 'CLNO2 '
-        FTBL = 'XCLNO2_200K_IUPACtbl.dat'
+        TITLNEW = 'BRCL '
+        FTBL = 'XBRCL_298K_IUPACtbl.dat'
         open (3, file=FTBL, status='OLD')
           ! Read header and write it
           read(3,'(a)') TABLE
@@ -225,7 +225,7 @@
           IT = 1
         endif
         TFACT = (TTL - T3(IT))/(T3(IT+1) - T3(IT))
-!---interpolate X-section vs. Wavelength, T=200
+!---interpolate X-section vs. Wavelength, T=298
         IW = 1
         do I = 2,NW-1
           if (WW .gt. W(I)) IW = I

@@ -121,8 +121,8 @@
           TITLET = ' 220'
           TT = 220.d0
         else if (ITT.eq.2) then
-          TITLET = ' 298'
-          TT = 298.d0
+          TITLET = ' 230'
+          TT = 230.d0
         else
           stop
         endif
@@ -204,7 +204,7 @@
       if(INIT .eq. 0) then
         ! Read cross section file
         TITLNEW = 'BRONO2 '
-        FTBL = 'XBRONO2_298K_IUPACtbl.dat'
+        FTBL = 'XBRONO2_230K_IUPACtbl.dat'
         open (3, file=FTBL, status='OLD')
           ! Read header and write it
           read(3,'(a)') TABLE

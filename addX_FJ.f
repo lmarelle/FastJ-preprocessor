@@ -21,13 +21,13 @@
       real*8, dimension(NB_+1) :: WBIN
       real*8, dimension(NB_) :: FBIN, ABIN
       real*8, dimension(NJ_) :: FFBIN,AABIN
-      integer IJX(NB_), ITT
+      integer IJX(NB_)
       integer NB,I,J,J1,J2,K,K1,K2
       integer INIT
       real*8 W(NS_),F(NS_)
       integer IBINJ(NS_)
       real*8 WZ(NZ_),X(NZ_,3)
-      real*8 W1,W2, TT,XP,XM, WW,XNEW
+      real*8 W1,W2, WW,XNEW
       character*6 TITLNEW
       character*4 TITLET
 
@@ -57,11 +57,11 @@
 
 !!!!!!!!!!!!!!!!!!!!initialization call to user subroutine!!!!!!!!!!!!!!
         INIT = 0
-      call XBRNO2 (WW,TT,XP,XM, X,INIT,TITLNEW)
+      call XBRO (WW, X, INIT, TITLNEW)
 
 
 
-!---synchronize with the BRNO2 cross sections (whether done or not)
+!---synchronize with the BRO cross sections (whether done or not)
 !---will loop K=1:NZ_  (J = K - 1 + K1), wavel = WZ(K)
         do J=1,NS_
           if (WZ(1) .eq. W(J)) goto 10
@@ -84,7 +84,7 @@
         enddo
           J = NS_ + 1
    11     J1 = J
-       do J=J1,NS_
+        do J=J1,NS_
           if (W(J) .gt. W2) goto 12
         enddo
           J = NS_ + 1
@@ -100,60 +100,33 @@
 !          it has 7% error in the very short wavel S-R bins of pratmo.
 !>>>>it should be fine for weighting cross sections!
 
-!  Total Q-yld from Stern-Volmer converted (as in acetone) to 3 different trop levels:
-!         alt=   0 km      5 km      13 km
-!           M=  2.46E+19   1.50E+19   5.8E+18
-!           T=     295K      272K       220K
-!           P =    999 hPa   566 hPa    177 hPa
-!   Only apply a single overall quantum yield PHI
-!        PHI = exp[ -0.055 * (w-308) ] /( 5.5 + 9.2e-19*[M])
-!   Thus there are 3 tables for MeVK, each designated by T(K)
-
-
-!---this looping is set for Temperature only
-        XP = 999.d0
-        XM = 2.46d19
-
-!!!!!!!!!!!!!!!!!!!major temperature-density loop !!!!!!!!!!!!!!!!!!!!!!
-      do ITT =2,2
-
-        if (ITT.eq.1) then
-          TITLET = ' 220'
-          TT = 220.d0
-        else if (ITT.eq.2) then
-          TITLET = ' 298'
-          TT = 298.d0
-        else
-          stop
-        endif
+      TITLET = ' 298'
 !---now ready to do any flux-weighted means over the 77-pratmo bins
-         FBIN(:) = 0.d0
-         ABIN(:) = 0.d0
+      FBIN(:) = 0.d0
+      ABIN(:) = 0.d0
 
 !!!!!!!!!!!!!!!!!!!primary high-resolution wavelength loop!!!!!!!!!!!!!!
-       do J = K1,K2
-        K = J - K1 + 1
-        I = IBINJ(J)
-        if (I .gt. 0) then
+      do J = K1,K2
+       K = J - K1 + 1
+       I = IBINJ(J)
+       if (I .gt. 0) then
 
-        call XBRNO2 (W(J), TT,XP,XM, XNEW, INIT, TITLNEW)
+       call XBRO (W(J), XNEW, INIT, TITLNEW)
 
-          FBIN(I) = FBIN(I) + F(J)
-          ABIN(I) = ABIN(I) + F(J)*XNEW
-        endif
-       enddo
-       do I=1,NB
-        if (FBIN(I) .gt. 0.d0) ABIN(I) = ABIN(I)/FBIN(I)
-       enddo
-!---write out UCI std 77-bin data
-!       write(6,'(a6,a4/(1p,8e10.3))') TITLNEW,TITLET, ABIN
+         FBIN(I) = FBIN(I) + F(J)
+         ABIN(I) = ABIN(I) + F(J)*XNEW
+       endif
+      enddo
+      do I=1,NB
+       if (FBIN(I) .gt. 0.d0) ABIN(I) = ABIN(I)/FBIN(I)
+      enddo
 
 !!!!!!!!!!!!!!!!!!!secondary sum 77-bin pratmo ==> 18-bin fast-JX!!!!!!!
 !---combine fast-JX bins:
 !---    non-SR bands (16:NB) are assigned a single JX bin
 !---    SR bands are split (by Opacity Distrib Fn) into a range of JX bins
-        FFBIN(:) = 0.d0
-        AABIN(:) = 0.d0
+      FFBIN(:) = 0.d0
+      AABIN(:) = 0.d0
       do I=16,NB
         J = IJX(I)
         FFBIN(J) = FFBIN(J) + FBIN(I)
@@ -171,40 +144,34 @@
 
 
 !!!!!!!!!!!!!!!!!!!save UCI fast-JX data bins!!!!!!!!!!!!!!!!!!!!!!!!!!
-        write(6,'(a6,a4,1p,7e10.3/10x)')
+      write(6,'(a6,a4,1p,7e10.3/10x)')
      &     TITLNEW, TITLET, AABIN(NJ_-6:NJ_)
 
-      enddo
-      stop
       end
 
 
 !-------------sample subroutine for fast-JX Xsection generation---------
 !-----------------------------------------------------------------------
-      subroutine XBRNO2 (WW,TT,PP,MM, XXWT,INIT, TITLNEW)
+      subroutine XBRO (WW, XXWT,INIT, TITLNEW)
 !-----------------------------------------------------------------------
 !   WW = wavelength (nm)
-!   TT = temerature (K) for interpolation
-!   PP = pressure (hPa) can be used in Stern-Volmer formula if need be
-!   MM = air density (#/cm3), ditto
-!   XXWT = cross section (cm2) as a function of WW and TT (and PP, MM)
+!   XXWT = cross section (cm2) as a function of WW 
 !   INIT = initialization:
 !     if INIT.eq.0 .then reads in any tables and sets Xsect name to TITLNEW
 
       implicit none
-      real*8, intent(in) :: WW, TT, PP, MM
+      real*8, intent(in) :: WW
       integer, intent(inout) :: INIT
       real*8, intent(out) :: XXWT
       character*6, intent(out) :: TITLNEW
       character*80 FTBL,TABLE,FORMW
-      real*8 W(999), XW(999),WWL,TTL,XBFACT,XTFACT,XXW,FW
-      real*8 TFACT,T3(3),XT3(999,3)
-      integer NW,NB,N,I,IW,IT
+      real*8 W(999), XW(999),WWL,XBFACT,XXW,FW
+      integer NW,NB,N,I,IW
 
       if(INIT .eq. 0) then
         ! Read cross section file
-        TITLNEW = 'BRNO2'
-        FTBL = 'XBRNO2_298K_JPLtbl.dat'
+        TITLNEW = 'BRO'
+        FTBL = 'XBRO_298K_JPLtbl.dat'
         open (3, file=FTBL, status='OLD')
           ! Read header and write it
           read(3,'(a)') TABLE
@@ -218,14 +185,7 @@
         close(3)
         INIT = 1
       else
-        TTL = min(T3(3), max(T3(1), TT))
-        if (TT .gt. T3(2)) then
-          IT = 2
-        else
-          IT = 1
-        endif
-        TFACT = (TTL - T3(IT))/(T3(IT+1) - T3(IT))
-!---interpolate X-section vs. Wavelength, T=298
+!---interpolate X-section vs. Wavelength
         IW = 1
         do I = 2,NW-1
           if (WW .gt. W(I)) IW = I
@@ -235,7 +195,7 @@
         XXW = XW(IW) + FW*(XW(IW+1)-XW(IW))
         XXWT = XXW  * 1.d-20
         ! If the wavelength is outside the wavelength range force to 0
-        if (WW .gt. W(NW)) XXWT = 0.0
+        if (WW .gt. W(NW) .or. WW .lt. W(1)) XXWT = 0.0
         ! write(*, '(4e13.4,1x,2i4)') WW,XXWT,W(IW),W(IW+1),IW,NW
       endif
       return

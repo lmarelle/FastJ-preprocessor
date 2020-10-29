@@ -57,11 +57,11 @@
 
 !!!!!!!!!!!!!!!!!!!!initialization call to user subroutine!!!!!!!!!!!!!!
         INIT = 0
-      call XCLONO2 (WW, X, INIT, TITLNEW)
+      call XOCLO (WW, X, INIT, TITLNEW)
 
 
 
-!---synchronize with the CLONO2 cross sections (whether done or not)
+!---synchronize with the OCLO cross sections (whether done or not)
 !---will loop K=1:NZ_  (J = K - 1 + K1), wavel = WZ(K)
         do J=1,NS_
           if (WZ(1) .eq. W(J)) goto 10
@@ -100,7 +100,7 @@
 !          it has 7% error in the very short wavel S-R bins of pratmo.
 !>>>>it should be fine for weighting cross sections!
 
-      TITLET = ' 296'
+      TITLET = ' 204'
 !---now ready to do any flux-weighted means over the 77-pratmo bins
       FBIN(:) = 0.d0
       ABIN(:) = 0.d0
@@ -111,7 +111,7 @@
        I = IBINJ(J)
        if (I .gt. 0) then
 
-       call XCLONO2 (W(J), XNEW, INIT, TITLNEW)
+       call XOCLO (W(J), XNEW, INIT, TITLNEW)
 
          FBIN(I) = FBIN(I) + F(J)
          ABIN(I) = ABIN(I) + F(J)*XNEW
@@ -152,7 +152,7 @@
 
 !-------------sample subroutine for fast-JX Xsection generation---------
 !-----------------------------------------------------------------------
-      subroutine XCLONO2 (WW, XXWT,INIT, TITLNEW)
+      subroutine XOCLO (WW, XXWT,INIT, TITLNEW)
 !-----------------------------------------------------------------------
 !   WW = wavelength (nm)
 !   XXWT = cross section (cm2) as a function of WW 
@@ -170,8 +170,8 @@
 
       if(INIT .eq. 0) then
         ! Read cross section file
-        TITLNEW = 'CLONO2'
-        FTBL = 'XCLONO2_296K_IUPACtbl.dat'
+        TITLNEW = 'OCLO'
+        FTBL = 'XOCLO_204K_JPLtbl.dat'
         open (3, file=FTBL, status='OLD')
           ! Read header and write it
           read(3,'(a)') TABLE

@@ -1,14 +1,14 @@
-# Louis Marelle, 2018/10/18
+# Last updated by Louis Marelle, 2022/01/25
 #
-# Contains the code performing cross section calculations for Fast-J input,
-# from M. J. Prather, adapted by L. Marelle
+# M. J. Prather's code performing cross section calculations for Fast-JX input,
+# adapted by L. Marelle for the WRF-Chem model's Fast-J module
 #
 Base code downloaded from
 ftp://128.200.14.8/public/prather/Fast-J_&_Cloud-J/UCI_fastJX68_addX.zip
 I adapted the code to use it with Fast-J instead of Fast-JX.
 
 - To run for a different species, retrieve the cross-section data on e.g. IUPAC:
-  http://iupac.pole-ether.fr/
+  http://iupac.pole-ether.fr/, or JPL
 - Copy the data to X<species_name>_<temperature_in_K>K_IUPACtbl.dat In this file,
   modify the integer value at the top, indicating the number of data lines, in
   order to match the number of lines just added.
